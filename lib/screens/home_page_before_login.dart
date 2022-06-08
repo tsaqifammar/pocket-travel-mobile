@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:pocket_travel_mobile/widgets/logout_button.dart';
+import 'package:pocket_travel_mobile/widgets/login_signup.dart';
 
-class HomePageAfterLogin extends StatefulWidget {
-  HomePageAfterLogin({Key? key}) : super(key: key);
-
+class HomePageBeforeLogin extends StatefulWidget {
+  const HomePageBeforeLogin({Key? key}) : super(key: key);
   @override
-  State<HomePageAfterLogin> createState() => _HomePageAfterLoginState();
+  State<HomePageBeforeLogin> createState() => _HomePageBeforeLoginState();
 }
 
-class _HomePageAfterLoginState extends State<HomePageAfterLogin> {
+class _HomePageBeforeLoginState extends State<HomePageBeforeLogin> {
   int _selectedNavbar = 0;
 
   void _changeSelectedNavBar(int index) {
@@ -23,22 +22,7 @@ class _HomePageAfterLoginState extends State<HomePageAfterLogin> {
         'Index 0: home',
       ),
     ),
-    Center(
-      child: Text(
-        'Index 1: Diary',
-      ),
-    ),
-    Center(
-      child: Text(
-        'Index 2: Checklist',
-      ),
-    ),
-    Center(
-      child: Text(
-        'Index 3: Plan',
-      ),
-    ),
-    Center(child: LogoutButton())
+    LoginSignUpScreen()
   ];
 
   @override
@@ -60,19 +44,7 @@ class _HomePageAfterLoginState extends State<HomePageAfterLogin> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
-            label: 'Diary',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Checklist',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Plan',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Logout',
+            label: 'Login/Signup',
           ),
         ],
         currentIndex: _selectedNavbar,

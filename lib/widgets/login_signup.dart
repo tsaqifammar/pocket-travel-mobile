@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_login/flutter_login.dart';
-import 'home_page_after_login.dart';
+import 'package:animate_navigator_transition_do/animate_navigator_transition_do.dart';
+import 'package:pocket_travel_mobile/screens/home_page_after_login.dart';
 
-const users = const {
+const users = {
   'alif@gmail.com': '12345',
   'hunter@gmail.com': 'hunter',
 };
@@ -33,22 +34,9 @@ class LoginSignUpScreen extends StatelessWidget {
     });
   }
 
+  //not used but required
   Future<String> _recoverPassword(String name) {
-    debugPrint('Name: $name');
     return Future.delayed(loginTime).then((_) {
-      if (!users.containsKey(name)) {
-        return 'User not exists';
-      }
-      return '';
-    });
-  }
-
-  Future<String> _usernameValidator(String name) {
-    debugPrint('Name: $name');
-    return Future.delayed(loginTime).then((_) {
-      if (!users.containsKey(name)) {
-        return 'User not exists';
-      }
       return '';
     });
   }
@@ -72,9 +60,11 @@ class LoginSignUpScreen extends StatelessWidget {
       onRecoverPassword: _recoverPassword,
       hideForgotPasswordButton: true,
       onSubmitAnimationCompleted: () {
-        Route route =
-            MaterialPageRoute(builder: (context) => HomePageAfterLogin());
-        Navigator.push(context, route);
+        AnimateNavigationTrasitionDo(
+            context: context, //BuildContext
+            childPage: HomePageAfterLogin(), // Page to go
+            animation: AnimationType.scale,
+            duration: Duration(milliseconds: 300));
       },
     );
   }
