@@ -37,6 +37,9 @@ dependencies:
   flutter_login: ^3.2.0
   scale_button: ^2.1.2
   animate_navigator_transition_do: ^1.1.0
+  http: ^0.13.4
+  timelines: ^0.1.0
+  flag: ^6.0.0
 
 dev_dependencies:
   flutter_test:

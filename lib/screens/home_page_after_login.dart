@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pocket_travel_mobile/screens/plan_page.dart';
 import 'package:pocket_travel_mobile/widgets/logout_button.dart';
 
 class HomePageAfterLogin extends StatefulWidget {
@@ -33,11 +34,7 @@ class _HomePageAfterLoginState extends State<HomePageAfterLogin> {
         'Index 2: Checklist',
       ),
     ),
-    Center(
-      child: Text(
-        'Index 3: Plan',
-      ),
-    ),
+    PlanPage(),
     Center(child: LogoutButton())
   ];
 
@@ -67,7 +64,7 @@ class _HomePageAfterLoginState extends State<HomePageAfterLogin> {
             label: 'Checklist',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person),
+            icon: Icon(Icons.event_note),
             label: 'Plan',
           ),
           BottomNavigationBarItem(
