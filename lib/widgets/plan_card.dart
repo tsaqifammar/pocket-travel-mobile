@@ -22,6 +22,22 @@ class _PlanCardState extends State<PlanCard> {
       ),
       child: Column(
         children: [
+          Padding(
+            padding: const EdgeInsets.all(10),
+            child: Row(
+              children: [
+                Text(
+                  widget.planData.name,
+                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                ),
+                const Spacer(),
+                Text(
+                  widget.planData.date.toString().split(' ')[0],
+                  style: const TextStyle(color: Colors.grey),
+                ),
+              ],
+            ),
+          ),
           FixedTimeline.tileBuilder(
             theme: TimelineThemeData(
               nodePosition: 0.2,
