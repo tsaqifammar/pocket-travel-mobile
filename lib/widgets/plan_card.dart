@@ -1,3 +1,4 @@
+import 'package:flag/flag.dart';
 import 'package:flutter/material.dart';
 import 'package:pocket_travel_mobile/models/plan.dart';
 import 'package:timelines/timelines.dart';
@@ -25,7 +26,12 @@ class _PlanCardState extends State<PlanCard> {
           Padding(
             padding: const EdgeInsets.all(10),
             child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
+                Padding(
+                  padding: const EdgeInsets.only(right: 8),
+                  child: Flag.fromString(widget.planData.country, height: 13.5, width: 18),
+                ),
                 Text(
                   widget.planData.name,
                   style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
