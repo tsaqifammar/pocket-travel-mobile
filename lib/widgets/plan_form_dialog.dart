@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pocket_travel_mobile/widgets/country_picker.dart';
 import 'package:pocket_travel_mobile/widgets/date_picker.dart';
+import 'package:pocket_travel_mobile/widgets/time_picker.dart';
 
 class PlanFormDialog extends StatelessWidget {
   const PlanFormDialog({Key? key}) : super(key: key);
@@ -38,66 +39,203 @@ class __PlanFormState extends State<_PlanForm> {
     "name": "",
     "date": "",
     "country": "",
-    "schedule": [],
+    "schedule": []
   };
+  static Map<int, Map<String, dynamic>> schedule = {};
+
+  @override
+  void dispose() {
+    schedule.forEach((i, value) {
+      schedule[i]!['activity'].dispose();
+    });
+    schedule = {};
+    super.dispose();
+  }
+
+  void _saveSchedule() {
+    schedule.forEach((i, value) {
+      _planData['schedule'].add({
+        "time": value['time'],
+        "activity": value['activity'].text
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Form(
       key: _formKey,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          const Text(
-            'Plan',
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: DatePicker(
-              onSaved: (value) {
-                _planData['date'] = value;
-              },
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            const Text(
+              'Plan',
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: CountryPicker(
-              onSaved: (value) {
-                _planData['country'] = value;
-              },
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: TextFormField(
-              decoration: const InputDecoration(
-                labelText: 'Plan Name',
-                icon: Icon(Icons.airplanemode_active),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: DatePicker(
+                onSaved: (value) {
+                  _planData['date'] = value;
+                },
               ),
-              validator: (value) => (value == null || value.isEmpty
-                  ? 'Please enter some text'
-                  : null),
-              onSaved: (value) {
-                _planData['name'] = value;
-              },
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: ElevatedButton(
-              child: const Text('Submit'),
-              onPressed: () {
-                if (_formKey.currentState!.validate()) {
-                  _formKey.currentState!.save();
-                  print(_planData.toString());
-                }
-              },
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: CountryPicker(
+                onSaved: (value) {
+                  _planData['country'] = value;
+                },
+              ),
             ),
-          )
-        ],
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: TextFormField(
+                decoration: const InputDecoration(
+                  labelText: 'Plan Name',
+                  icon: Icon(Icons.airplanemode_active),
+                ),
+                validator: (value) => (value == null || value.isEmpty
+                    ? 'Please enter some text'
+                    : null),
+                onSaved: (value) {
+                  _planData['name'] = value;
+                },
+              ),
+            ),
+            const Padding(
+              padding: EdgeInsets.all(8.0),
+              child: _ScheduleForm(),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: ElevatedButton(
+                child: const Text('Submit'),
+                onPressed: () {
+                  if (_formKey.currentState!.validate()) {
+                    _formKey.currentState!.save();
+                    _saveSchedule();
+                    print(_planData.toString());
+                  }
+                },
+              ),
+            )
+          ],
+        ),
       ),
+    );
+  }
+}
+
+class _ScheduleForm extends StatefulWidget {
+  const _ScheduleForm({Key? key}) : super(key: key);
+
+  @override
+  State<_ScheduleForm> createState() => __ScheduleFormState();
+}
+
+class __ScheduleFormState extends State<_ScheduleForm> {
+  int _id = 0;
+
+  List<TableRow> _getScheduleRows() {
+    List<TableRow> rows = [];
+    __PlanFormState.schedule.forEach((i, value) {
+      rows.add(
+        TableRow(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(4),
+              child: TimePicker(
+                value: __PlanFormState.schedule[i]!['time'],
+                onChanged: (value) => setState(() {
+                  __PlanFormState.schedule[i]!['time'] = value;
+                }),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(4),
+              child: TextFormField(
+                controller: __PlanFormState.schedule[i]!['activity'],
+                validator: (value) => (value == null || value.isEmpty
+                    ? 'Please enter some text'
+                    : null),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(4),
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  primary: Colors.red,
+                  padding: const EdgeInsets.all(0)
+                ),
+                onPressed: () {
+                  __PlanFormState.schedule.removeWhere((k, v) => k == i);
+                  setState(() {});
+                },
+                child: const Icon(Icons.cancel_outlined),
+              ),
+            )
+          ],
+        )
+      );
+    });
+    return rows;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8.0),
+          child: Row(
+            children: [
+              const Text('Schedule', style: TextStyle(fontWeight: FontWeight.bold)),
+              const Spacer(),
+              ElevatedButton(
+                onPressed: () {
+                  __PlanFormState.schedule[_id++] = {
+                    "time": "00:00",
+                    "activity": TextEditingController(),
+                  };
+                  setState(() {});
+                },
+                child: const Text('Add Item +')
+              ),
+            ],
+          ),
+        ),
+        Table(
+          border: TableBorder.all(color: Colors.grey),
+          columnWidths: const {
+            0: FixedColumnWidth(70),
+            1: FlexColumnWidth(),
+            2: FixedColumnWidth(32),
+          },
+          defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+          children: <TableRow>[
+            const TableRow(
+              children: [
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 6, vertical: 12),
+                  child: Text('Time', style: TextStyle(fontWeight: FontWeight.bold))
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 6, vertical: 12),
+                  child: Text('Activity', style: TextStyle(fontWeight: FontWeight.bold))
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 6, vertical: 12),
+                  child: Text('')
+                ),
+              ],
+            ),
+            ..._getScheduleRows(),
+          ],
+        ),
+      ],
     );
   }
 }
