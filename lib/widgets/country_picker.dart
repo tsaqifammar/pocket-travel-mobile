@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 
 class CountryPicker extends StatelessWidget {
-  const CountryPicker({Key? key, this.onSaved}) : super(key: key);
+  const CountryPicker({Key? key, this.initialValue, this.onSaved}) : super(key: key);
 
   final void Function(String?)? onSaved;
+  final String? initialValue;
 
   @override
   Widget build(BuildContext context) {
     return DropdownButtonFormField<String>(
+      value: initialValue,
       isExpanded: true,
       items: _countries
           .map((value) => DropdownMenuItem(
