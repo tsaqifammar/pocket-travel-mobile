@@ -1,6 +1,9 @@
 
 import 'package:flutter/material.dart';
 
+/// A DatePicker widget.
+/// Basically a text field, that is if pressed, will run showDatePicker().
+/// Once a date is picked, the text field will be filled with that selected date.
 class DatePicker extends StatefulWidget {
   const DatePicker({Key? key, this.onSaved}) : super(key: key);
 
