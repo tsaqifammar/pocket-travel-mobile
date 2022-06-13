@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pocket_travel_mobile/widgets/plan_form_dialog.dart';
 
 class PlanHeader extends StatelessWidget {
   const PlanHeader({Key? key}) : super(key: key);
@@ -17,7 +18,10 @@ class PlanHeader extends StatelessWidget {
           const Text('Plan', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
           ElevatedButton(
             onPressed: () {
-              print('hello');
+              showDialog(
+                context: context,
+                builder: (context) => const PlanFormDialog(),
+              );
             },
             child: const Text('Create +')
           ),
