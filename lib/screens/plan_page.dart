@@ -1,4 +1,6 @@
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:pocket_travel_mobile/models/plan.dart';
 import 'package:pocket_travel_mobile/services/plan_service.dart';
@@ -9,19 +11,30 @@ class PlanPage extends StatefulWidget {
   const PlanPage({Key? key}) : super(key: key);
 
   @override
-  State<PlanPage> createState() => _PlanPageState();
+  State<PlanPage> createState() => PlanPageState();
 }
 
-class _PlanPageState extends State<PlanPage> {
-  late Future<List<Plan>> plans;
+class PlanPageState extends State<PlanPage> {
+  static late StreamController<List<Plan>?> _events;
 
   @override
   void initState() {
     super.initState();
-    // TODO: Ambil userId dan token dari provider
-    String userId = 'user-eW55sv5gJqujtWgO';
-    String token = '62a476164223be28131a6ad3|4rlylsCIl7fQMaJMLqa4GyVMOasjr6xspwSxMmMG';
-    plans = PlanService().fetchPlans(userId, token);
+    _events = StreamController();
+    fetchPlans();
+  }
+
+  static Future<void> fetchPlans() async {
+    try {
+      // TODO: Ambil userId dan token dari provider
+      String userId = 'user-eW55sv5gJqujtWgO';
+      String token = '62a476164223be28131a6ad3|4rlylsCIl7fQMaJMLqa4GyVMOasjr6xspwSxMmMG';
+      List<Plan> res = await PlanService().fetchPlans(userId, token);
+      _events.add(res);
+    } catch (e) {
+      // mungkin tampilin snackbar itu
+      print('fetching plan failed');
+    }
   }
 
   @override
@@ -29,8 +42,8 @@ class _PlanPageState extends State<PlanPage> {
     return Scaffold(
       body: Container(
         margin: const EdgeInsets.all(10),
-        child: FutureBuilder<List<Plan>>(
-          future: plans,
+        child: StreamBuilder<List<Plan>?>(
+          stream: _events.stream,
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               var plansData = snapshot.data!;

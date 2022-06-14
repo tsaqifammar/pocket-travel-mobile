@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pocket_travel_mobile/screens/plan_page.dart';
 import 'package:pocket_travel_mobile/services/plan_service.dart';
 import 'package:pocket_travel_mobile/widgets/country_picker.dart';
 import 'package:pocket_travel_mobile/widgets/date_picker.dart';
@@ -121,13 +122,13 @@ class __PlanFormState extends State<_PlanForm> {
               padding: const EdgeInsets.all(8.0),
               child: ElevatedButton(
                 child: const Text('Submit'),
-                onPressed: () {
+                onPressed: () async {
                   if (_formKey.currentState!.validate()) {
                     _formKey.currentState!.save();
                     _saveSchedule();
-                    _createNewPlan();
-                    print(_planData.toString());
+                    await _createNewPlan();
                     Navigator.of(context).pop();
+                    await PlanPageState.fetchPlans();
                   }
                 },
               ),
