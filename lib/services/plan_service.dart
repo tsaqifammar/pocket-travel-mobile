@@ -21,4 +21,20 @@ class PlanService {
       throw Exception('Fetching plan failed');
     }
   }
+
+  Future<void> createPlan(String userId, String token, Map<String, dynamic> data) async {
+    Map<String, String> headers = {
+      'Content-type': 'application/json',
+      'Authorization': 'Bearer $token'
+    };
+    final response = await http.post(
+      Uri.parse('${URLS.BACKEND}/plan/$userId'),
+      headers: headers,
+      body: jsonEncode(data),
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception('Creating plan failed');
+    }
+  }
 }
