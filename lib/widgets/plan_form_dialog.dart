@@ -157,9 +157,7 @@ class __PlanFormState extends State<_PlanForm> {
                     }
                     await PlanService(context).fetchPlans();
                     Navigator.of(context).pop();
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      StatusSnackBar.success('Success')
-                    );
+                    ScaffoldMessenger.of(context).showSnackBar(StatusSnackBar.success('Success'));
                   }
                 },
               ),
@@ -228,22 +226,25 @@ class __ScheduleFormState extends State<_ScheduleForm> {
           padding: const EdgeInsets.symmetric(vertical: 8.0),
           child: Row(
             children: [
-              const Text('Schedule',
-                  style: TextStyle(fontWeight: FontWeight.bold)),
+              const Text(
+                'Schedule',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
               const Spacer(),
               ElevatedButton(
-                  onPressed: () {
-                    __PlanFormState.createScheduleRow();
-                    setState(() {});
-                  },
-                  child: const Text('Add Item +')),
+                onPressed: () {
+                  __PlanFormState.createScheduleRow();
+                  setState(() {});
+                },
+                child: const Text('Add Item +'),
+              ),
             ],
           ),
         ),
         Table(
           border: TableBorder.all(color: Colors.grey),
           columnWidths: const {
-            0: FixedColumnWidth(70),
+            0: IntrinsicColumnWidth(),
             1: FlexColumnWidth(),
             2: FixedColumnWidth(32),
           },
