@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:pocket_travel_mobile/screens/plan_page.dart';
 import 'package:pocket_travel_mobile/services/plan_service.dart';
 import 'package:pocket_travel_mobile/widgets/country_picker.dart';
 import 'package:pocket_travel_mobile/widgets/date_picker.dart';
@@ -63,13 +62,6 @@ class __PlanFormState extends State<_PlanForm> {
     });
   }
 
-  Future<void> _createNewPlan() async {
-    // TODO: Ambil userId dan token dari provider
-    String userId = 'user-eW55sv5gJqujtWgO';
-    String token = '62a476164223be28131a6ad3|4rlylsCIl7fQMaJMLqa4GyVMOasjr6xspwSxMmMG';
-    await PlanService().createPlan(userId, token, _planData);
-  }
-
   @override
   Widget build(BuildContext context) {
     return Form(
@@ -126,9 +118,9 @@ class __PlanFormState extends State<_PlanForm> {
                   if (_formKey.currentState!.validate()) {
                     _formKey.currentState!.save();
                     _saveSchedule();
-                    await _createNewPlan();
+                    await PlanService(context).createPlan(_planData);
+                    await PlanService(context).fetchPlans();
                     Navigator.of(context).pop();
-                    await PlanPageState.fetchPlans();
                   }
                 },
               ),

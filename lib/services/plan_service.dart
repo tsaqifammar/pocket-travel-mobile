@@ -1,11 +1,24 @@
 import 'dart:convert';
 
+import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:pocket_travel_mobile/models/plan.dart';
+import 'package:pocket_travel_mobile/providers/user_login_provider.dart';
 import 'package:pocket_travel_mobile/utils/urls.dart';
+import 'package:pocket_travel_mobile/providers/plan_provider.dart';
+import 'package:provider/provider.dart';
 
 class PlanService {
-  Future<List<Plan>> fetchPlans(String userId, String token) async {
+  late BuildContext _context;
+  late String userId, token;
+
+  PlanService(BuildContext context) {
+    _context = context;
+    userId = _context.read<UserLoginProvider>().getUserId;
+    token = _context.read<UserLoginProvider>().getToken;
+  }
+
+  Future<void> fetchPlans() async {
     Map<String, String> headers = {
       'Content-type': 'application/json',
       'Accept': 'application/json',
@@ -16,13 +29,14 @@ class PlanService {
 
     if (response.statusCode == 200) {
       var resJson = jsonDecode(response.body);
-      return (resJson['plans'] as List).map((p) => Plan.fromJson(p)).toList();
+      _context.read<PlanProvider>().setPlans(
+          (resJson['plans'] as List).map((p) => Plan.fromJson(p)).toList());
     } else {
       throw Exception('Fetching plan failed');
     }
   }
 
-  Future<void> createPlan(String userId, String token, Map<String, dynamic> data) async {
+  Future<void> createPlan(Map<String, dynamic> data) async {
     Map<String, String> headers = {
       'Content-type': 'application/json',
       'Authorization': 'Bearer $token'
