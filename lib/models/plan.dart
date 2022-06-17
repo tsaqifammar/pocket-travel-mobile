@@ -3,7 +3,8 @@
 //     final plan = planFromJson(jsonString);
 
 import 'dart:convert';
-import 'package:pocket_travel_mobile/models/Schedule.dart';
+
+import 'package:pocket_travel_mobile/models/schedule.dart';
 
 List<Plan> planFromJson(String str) =>
     List<Plan>.from(json.decode(str).map((x) => Plan.fromJson(x)));
