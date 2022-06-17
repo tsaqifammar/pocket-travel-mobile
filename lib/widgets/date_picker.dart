@@ -5,9 +5,9 @@ import 'package:flutter/material.dart';
 /// Basically a text field, that is if pressed, will run showDatePicker().
 /// Once a date is picked, the text field will be filled with that selected date.
 class DatePicker extends StatefulWidget {
-  const DatePicker({Key? key, this.initialValue = '', this.onSaved}) : super(key: key);
+  const DatePicker({Key? key, this.initialValue, this.onSaved}) : super(key: key);
 
-  final String initialValue;
+  final String? initialValue;
   final void Function(String?)? onSaved;
 
   @override
@@ -23,7 +23,11 @@ class _DatePickerState extends State<DatePicker> {
   void initState() {
     super.initState();
     focusNode = FocusNode();
-    _controller.text = widget.initialValue;
+    if (widget.initialValue != null) {
+      _controller.text = widget.initialValue!;
+    } else {
+      _controller.text = '';
+    }
   }
 
   @override

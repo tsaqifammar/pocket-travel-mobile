@@ -51,4 +51,20 @@ class PlanService {
       throw Exception('Creating plan failed');
     }
   }
+
+  Future<void> editPlan(String planId, Map<String, dynamic> data) async {
+    Map<String, String> headers = {
+      'Content-type': 'application/json',
+      'Authorization': 'Bearer $token'
+    };
+    final response = await http.put(
+      Uri.parse('${URLS.BACKEND}/plan/$planId/detail'),
+      headers: headers,
+      body: jsonEncode(data),
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception('Editing plan failed');
+    }
+  }
 }

@@ -1,7 +1,10 @@
 import 'package:flag/flag.dart';
 import 'package:flutter/material.dart';
 import 'package:pocket_travel_mobile/models/plan.dart';
+import 'package:pocket_travel_mobile/widgets/plan_form_dialog.dart';
 import 'package:timelines/timelines.dart';
+
+enum ActionMenu { edit, delete }
 
 class PlanCard extends StatefulWidget {
   const PlanCard({Key? key, required this.planData}) : super(key: key);
@@ -44,33 +47,63 @@ class _PlanCardState extends State<PlanCard> {
               ],
             ),
           ),
-          FixedTimeline.tileBuilder(
-            theme: TimelineThemeData(
-              nodePosition: 0.2,
-              connectorTheme: const ConnectorThemeData(
-                thickness: 3.0,
-                color: Colors.grey
+          Stack(
+            children: [
+              Positioned(
+                right: 0,
+                bottom: 0,
+                child: PopupMenuButton<ActionMenu>(
+                  onSelected: (ActionMenu item) {
+                    if (item.name == 'edit') {
+                      showDialog(
+                        context: context,
+                        builder: (context) => PlanFormDialog(initialPlan: widget.planData),
+                      );
+                    } else {
+                      print('delete ${widget.planData.planId}');
+                    }
+                  },
+                  itemBuilder: (context) => [
+                    const PopupMenuItem(
+                      value: ActionMenu.edit,
+                      child: Text('Edit'),
+                    ),
+                    const PopupMenuItem(
+                      value: ActionMenu.delete,
+                      child: Text('Delete'),
+                    ),
+                  ],
+                ),
               ),
-              indicatorTheme: const IndicatorThemeData(
-                size: 10.0,
-                color: Colors.black,
+              FixedTimeline.tileBuilder(
+                theme: TimelineThemeData(
+                  nodePosition: 0.2,
+                  connectorTheme: const ConnectorThemeData(
+                    thickness: 3.0,
+                    color: Colors.grey
+                  ),
+                  indicatorTheme: const IndicatorThemeData(
+                    size: 10.0,
+                    color: Colors.black,
+                  ),
+                ),
+                builder: TimelineTileBuilder.connectedFromStyle(
+                  firstConnectorStyle: ConnectorStyle.transparent,
+                  lastConnectorStyle: ConnectorStyle.transparent,
+                  connectorStyleBuilder: (context, index) => ConnectorStyle.solidLine,
+                  indicatorStyleBuilder: (context, index) => IndicatorStyle.dot,
+                  itemCount: widget.planData.schedule.length,
+                  oppositeContentsBuilder: (context, index) => Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(widget.planData.schedule[index].time),
+                  ),
+                  contentsBuilder: (context, index) => Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(widget.planData.schedule[index].activity),
+                  ),
+                ),
               ),
-            ),
-            builder: TimelineTileBuilder.connectedFromStyle(
-              firstConnectorStyle: ConnectorStyle.transparent,
-              lastConnectorStyle: ConnectorStyle.transparent,
-              connectorStyleBuilder: (context, index) => ConnectorStyle.solidLine,
-              indicatorStyleBuilder: (context, index) => IndicatorStyle.dot,
-              itemCount: widget.planData.schedule.length,
-              oppositeContentsBuilder: (context, index) => Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(widget.planData.schedule[index].time),
-              ),
-              contentsBuilder: (context, index) => Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(widget.planData.schedule[index].activity),
-              ),
-            ),
+            ],
           ),
         ],
       ),

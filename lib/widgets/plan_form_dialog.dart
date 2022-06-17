@@ -1,18 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:pocket_travel_mobile/models/plan.dart';
+import 'package:pocket_travel_mobile/models/schedule.dart';
 import 'package:pocket_travel_mobile/services/plan_service.dart';
 import 'package:pocket_travel_mobile/widgets/country_picker.dart';
 import 'package:pocket_travel_mobile/widgets/date_picker.dart';
 import 'package:pocket_travel_mobile/widgets/time_picker.dart';
 
 class PlanFormDialog extends StatelessWidget {
-  const PlanFormDialog({Key? key}) : super(key: key);
+  const PlanFormDialog({Key? key, this.initialPlan}) : super(key: key);
+
+  final Plan? initialPlan;
 
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
       content: Stack(
         children: [
-          const _PlanForm(),
+          _PlanForm(initialPlan: initialPlan),
           Positioned(
             right: 0,
             top: 0,
@@ -28,7 +32,9 @@ class PlanFormDialog extends StatelessWidget {
 }
 
 class _PlanForm extends StatefulWidget {
-  const _PlanForm({Key? key}) : super(key: key);
+  const _PlanForm({Key? key, this.initialPlan}) : super(key: key);
+
+  final Plan? initialPlan;
 
   @override
   State<_PlanForm> createState() => __PlanFormState();
@@ -42,7 +48,31 @@ class __PlanFormState extends State<_PlanForm> {
     "country": "",
     "schedule": []
   };
+
+  // to be used in _ScheduleForm, let's just assume they share these infos.
+  // don't think this way of managing states is ideal, but this will do for now.
+  static int id = 0;
   static Map<int, Map<String, dynamic>> schedule = {};
+  static void createScheduleRow({Schedule? initialValue}) {
+    schedule[id] = {
+      "time": (initialValue != null ? initialValue.time : "00:00"),
+      "activity": TextEditingController(),
+    };
+    if (initialValue != null) {
+      schedule[id]!['activity'].text = initialValue.activity;
+    }
+    id++;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.initialPlan != null) {
+      widget.initialPlan!.schedule.forEach((s) {
+        createScheduleRow(initialValue: s);
+      });
+    }
+  }
 
   @override
   void dispose() {
@@ -55,10 +85,8 @@ class __PlanFormState extends State<_PlanForm> {
 
   void _saveSchedule() {
     schedule.forEach((i, value) {
-      _planData['schedule'].add({
-        "time": value['time'],
-        "activity": value['activity'].text
-      });
+      _planData['schedule']
+          .add({"time": value['time'], "activity": value['activity'].text});
     });
   }
 
@@ -78,6 +106,7 @@ class __PlanFormState extends State<_PlanForm> {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: DatePicker(
+                initialValue: widget.initialPlan?.date.toString().split(' ')[0],
                 onSaved: (value) {
                   _planData['date'] = value;
                 },
@@ -86,6 +115,7 @@ class __PlanFormState extends State<_PlanForm> {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: CountryPicker(
+                initialValue: widget.initialPlan?.country,
                 onSaved: (value) {
                   _planData['country'] = value;
                 },
@@ -94,6 +124,7 @@ class __PlanFormState extends State<_PlanForm> {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: TextFormField(
+                initialValue: widget.initialPlan?.name,
                 decoration: const InputDecoration(
                   labelText: 'Plan Name',
                   icon: Icon(Icons.airplanemode_active),
@@ -118,7 +149,11 @@ class __PlanFormState extends State<_PlanForm> {
                   if (_formKey.currentState!.validate()) {
                     _formKey.currentState!.save();
                     _saveSchedule();
-                    await PlanService(context).createPlan(_planData);
+                    if (widget.initialPlan == null) {
+                      await PlanService(context).createPlan(_planData);
+                    } else {
+                      await PlanService(context).editPlan(widget.initialPlan!.planId, _planData);
+                    }
                     await PlanService(context).fetchPlans();
                     Navigator.of(context).pop();
                   }
@@ -140,49 +175,43 @@ class _ScheduleForm extends StatefulWidget {
 }
 
 class __ScheduleFormState extends State<_ScheduleForm> {
-  int _id = 0;
-
   List<TableRow> _getScheduleRows() {
     List<TableRow> rows = [];
     __PlanFormState.schedule.forEach((i, value) {
-      rows.add(
-        TableRow(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(4),
-              child: TimePicker(
-                value: __PlanFormState.schedule[i]!['time'],
-                onChanged: (value) => setState(() {
-                  __PlanFormState.schedule[i]!['time'] = value;
-                }),
-              ),
+      rows.add(TableRow(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(4),
+            child: TimePicker(
+              value: __PlanFormState.schedule[i]!['time'],
+              onChanged: (value) => setState(() {
+                __PlanFormState.schedule[i]!['time'] = value;
+              }),
             ),
-            Padding(
-              padding: const EdgeInsets.all(4),
-              child: TextFormField(
-                controller: __PlanFormState.schedule[i]!['activity'],
-                validator: (value) => (value == null || value.isEmpty
-                    ? 'Please enter some text'
-                    : null),
-              ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(4),
+            child: TextFormField(
+              controller: __PlanFormState.schedule[i]!['activity'],
+              validator: (value) => (value == null || value.isEmpty
+                  ? 'Please enter some text'
+                  : null),
             ),
-            Padding(
-              padding: const EdgeInsets.all(4),
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  primary: Colors.red,
-                  padding: const EdgeInsets.all(0)
-                ),
-                onPressed: () {
-                  __PlanFormState.schedule.removeWhere((k, v) => k == i);
-                  setState(() {});
-                },
-                child: const Icon(Icons.cancel_outlined),
-              ),
-            )
-          ],
-        )
-      );
+          ),
+          Padding(
+            padding: const EdgeInsets.all(4),
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                  primary: Colors.red, padding: const EdgeInsets.all(0)),
+              onPressed: () {
+                __PlanFormState.schedule.removeWhere((k, v) => k == i);
+                setState(() {});
+              },
+              child: const Icon(Icons.cancel_outlined),
+            ),
+          )
+        ],
+      ));
     });
     return rows;
   }
@@ -195,18 +224,15 @@ class __ScheduleFormState extends State<_ScheduleForm> {
           padding: const EdgeInsets.symmetric(vertical: 8.0),
           child: Row(
             children: [
-              const Text('Schedule', style: TextStyle(fontWeight: FontWeight.bold)),
+              const Text('Schedule',
+                  style: TextStyle(fontWeight: FontWeight.bold)),
               const Spacer(),
               ElevatedButton(
-                onPressed: () {
-                  __PlanFormState.schedule[_id++] = {
-                    "time": "00:00",
-                    "activity": TextEditingController(),
-                  };
-                  setState(() {});
-                },
-                child: const Text('Add Item +')
-              ),
+                  onPressed: () {
+                    __PlanFormState.createScheduleRow();
+                    setState(() {});
+                  },
+                  child: const Text('Add Item +')),
             ],
           ),
         ),
@@ -222,17 +248,16 @@ class __ScheduleFormState extends State<_ScheduleForm> {
             const TableRow(
               children: [
                 Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 6, vertical: 12),
-                  child: Text('Time', style: TextStyle(fontWeight: FontWeight.bold))
-                ),
+                    padding: EdgeInsets.symmetric(horizontal: 6, vertical: 12),
+                    child: Text('Time',
+                        style: TextStyle(fontWeight: FontWeight.bold))),
                 Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 6, vertical: 12),
-                  child: Text('Activity', style: TextStyle(fontWeight: FontWeight.bold))
-                ),
+                    padding: EdgeInsets.symmetric(horizontal: 6, vertical: 12),
+                    child: Text('Activity',
+                        style: TextStyle(fontWeight: FontWeight.bold))),
                 Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 6, vertical: 12),
-                  child: Text('')
-                ),
+                    padding: EdgeInsets.symmetric(horizontal: 6, vertical: 12),
+                    child: Text('')),
               ],
             ),
             ..._getScheduleRows(),
