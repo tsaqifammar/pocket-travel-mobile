@@ -1,6 +1,7 @@
 import 'package:flag/flag.dart';
 import 'package:flutter/material.dart';
 import 'package:pocket_travel_mobile/models/plan.dart';
+import 'package:pocket_travel_mobile/services/plan_service.dart';
 import 'package:pocket_travel_mobile/widgets/plan_form_dialog.dart';
 import 'package:timelines/timelines.dart';
 
@@ -53,14 +54,15 @@ class _PlanCardState extends State<PlanCard> {
                 right: 0,
                 bottom: 0,
                 child: PopupMenuButton<ActionMenu>(
-                  onSelected: (ActionMenu item) {
+                  onSelected: (ActionMenu item) async {
                     if (item.name == 'edit') {
                       showDialog(
                         context: context,
                         builder: (context) => PlanFormDialog(initialPlan: widget.planData),
                       );
                     } else {
-                      print('delete ${widget.planData.planId}');
+                      await PlanService(context).deletePlan(widget.planData.planId);
+                      await PlanService(context).fetchPlans();
                     }
                   },
                   itemBuilder: (context) => [

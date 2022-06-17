@@ -67,4 +67,19 @@ class PlanService {
       throw Exception('Editing plan failed');
     }
   }
+
+  Future<void> deletePlan(String planId) async {
+    Map<String, String> headers = {
+      'Content-type': 'application/json',
+      'Authorization': 'Bearer $token'
+    };
+    final response = await http.delete(
+      Uri.parse('${URLS.BACKEND}/plan/$planId/detail'),
+      headers: headers
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception('Deleting plan failed');
+    }
+  }
 }
