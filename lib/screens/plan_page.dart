@@ -15,17 +15,22 @@ class PlanPage extends StatefulWidget {
 }
 
 class _PlanPageState extends State<PlanPage> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
-      await PlanService(context).fetchPlans();
+      if (context.read<PlanProvider>().getPlans.isEmpty) {
+        await PlanService(context).fetchPlans();
+      }
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       body: Container(
         margin: const EdgeInsets.all(10),
         child: <Widget>() {

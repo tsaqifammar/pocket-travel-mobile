@@ -2,6 +2,7 @@ import 'package:flag/flag.dart';
 import 'package:flutter/material.dart';
 import 'package:pocket_travel_mobile/models/plan.dart';
 import 'package:pocket_travel_mobile/services/plan_service.dart';
+import 'package:pocket_travel_mobile/utils/status_snackbars.dart';
 import 'package:pocket_travel_mobile/widgets/plan_form_dialog.dart';
 import 'package:timelines/timelines.dart';
 
@@ -34,11 +35,13 @@ class _PlanCardState extends State<PlanCard> {
               children: [
                 Padding(
                   padding: const EdgeInsets.only(right: 8),
-                  child: Flag.fromString(widget.planData.country, height: 13.5, width: 18),
+                  child: Flag.fromString(widget.planData.country,
+                      height: 13.5, width: 18),
                 ),
                 Text(
                   widget.planData.name,
-                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 16),
                 ),
                 const Spacer(),
                 Text(
@@ -62,6 +65,9 @@ class _PlanCardState extends State<PlanCard> {
                       );
                     } else {
                       await PlanService(context).deletePlan(widget.planData.planId);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        StatusSnackBar.success('Success')
+                      );
                       await PlanService(context).fetchPlans();
                     }
                   },
@@ -81,9 +87,7 @@ class _PlanCardState extends State<PlanCard> {
                 theme: TimelineThemeData(
                   nodePosition: 0.2,
                   connectorTheme: const ConnectorThemeData(
-                    thickness: 3.0,
-                    color: Colors.grey
-                  ),
+                      thickness: 3.0, color: Colors.grey),
                   indicatorTheme: const IndicatorThemeData(
                     size: 10.0,
                     color: Colors.black,
@@ -92,7 +96,8 @@ class _PlanCardState extends State<PlanCard> {
                 builder: TimelineTileBuilder.connectedFromStyle(
                   firstConnectorStyle: ConnectorStyle.transparent,
                   lastConnectorStyle: ConnectorStyle.transparent,
-                  connectorStyleBuilder: (context, index) => ConnectorStyle.solidLine,
+                  connectorStyleBuilder: (context, index) =>
+                      ConnectorStyle.solidLine,
                   indicatorStyleBuilder: (context, index) => IndicatorStyle.dot,
                   itemCount: widget.planData.schedule.length,
                   oppositeContentsBuilder: (context, index) => Padding(

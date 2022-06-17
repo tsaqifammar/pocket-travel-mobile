@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:pocket_travel_mobile/models/plan.dart';
 import 'package:pocket_travel_mobile/models/schedule.dart';
 import 'package:pocket_travel_mobile/services/plan_service.dart';
+import 'package:pocket_travel_mobile/utils/status_snackbars.dart';
 import 'package:pocket_travel_mobile/widgets/country_picker.dart';
 import 'package:pocket_travel_mobile/widgets/date_picker.dart';
 import 'package:pocket_travel_mobile/widgets/time_picker.dart';
@@ -156,6 +157,9 @@ class __PlanFormState extends State<_PlanForm> {
                     }
                     await PlanService(context).fetchPlans();
                     Navigator.of(context).pop();
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      StatusSnackBar.success('Success')
+                    );
                   }
                 },
               ),
