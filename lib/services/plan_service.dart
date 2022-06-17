@@ -1,4 +1,3 @@
-
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
@@ -12,7 +11,8 @@ class PlanService {
       'Accept': 'application/json',
       'Authorization': 'Bearer $token'
     };
-    final response = await http.get(Uri.parse('${URLS.BACKEND}/plan/$userId'), headers: headers);
+    final response = await http.get(Uri.parse('${URLS.BACKEND}/plan/$userId'),
+        headers: headers);
 
     if (response.statusCode == 200) {
       var resJson = jsonDecode(response.body);
