@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 
 class UserLoginProvider extends ChangeNotifier {
   var _userId = '';
-  var _token = 'sowa';
+  var _token = '';
 
   String get getUserId {
     return _userId;
