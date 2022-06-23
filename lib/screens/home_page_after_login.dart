@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pocket_travel_mobile/screens/diaries.dart';
 import 'package:pocket_travel_mobile/screens/plan_page.dart';
 import 'package:pocket_travel_mobile/widgets/logout_button.dart';
 
@@ -19,16 +20,8 @@ class _HomePageAfterLoginState extends State<HomePageAfterLogin> {
   }
 
   static List<Widget> _pages = <Widget>[
-    Center(
-      child: Text(
-        'Index 0: home',
-      ),
-    ),
-    Center(
-      child: Text(
-        'Index 1: Diary',
-      ),
-    ),
+    PublicDiaries(),
+    PrivateDiaries(),
     Center(
       child: Text(
         'Index 2: Checklist',
