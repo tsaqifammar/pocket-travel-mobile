@@ -46,8 +46,7 @@ class _HomePageAfterLoginState extends State<HomePageAfterLogin> {
           title: const Text('PocketTravel',
               style:
                   TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
-          backgroundColor: Colors.white,
-          elevation: 0),
+          backgroundColor: Colors.white,),
       body: _pages.elementAt(_selectedNavbar),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
