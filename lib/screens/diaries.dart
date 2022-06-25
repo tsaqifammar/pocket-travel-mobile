@@ -27,7 +27,7 @@ class _DiariesState extends State {
   _DiariesState(this.isPublic);
 
   var _diaries = [];
-  var _diary = {};
+  Map<String,dynamic> _diary = {};
   bool _firstRun = false;
   bool _dbg = false;
   var _dbMsg;
@@ -55,6 +55,40 @@ class _DiariesState extends State {
     });
   }
 
+  Future<void> _addDiary(Map<String,dynamic> diary) async {
+    var response;
+    Map<String, String> headers = {
+      'Content-type': 'application/json',
+      'Accept': 'application/json',
+      'Authorization': 'Bearer $_token'
+    };;
+    diary['isPublic'] = true;
+    response = await http.post(Uri.parse('${URLS.BACKEND}/diary'), headers: headers, body: jsonEncode(diary));
+    if (response.statusCode == 201) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        StatusSnackBar.success('Success')
+      );
+      await _getDiary();
+    };
+  }
+
+  Future<void> _updateDiary(Map<String,dynamic> diary) async {
+    var response;
+    Map<String, String> headers = {
+      'Content-type': 'application/json',
+      'Accept': 'application/json',
+      'Authorization': 'Bearer $_token'
+    };;
+    diary['isPublic'] = true;
+    response = await http.put(Uri.parse('${URLS.BACKEND}/diary/${diary['id']}'), headers: headers, body: jsonEncode(diary));
+    if (response.statusCode == 201) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        StatusSnackBar.success('Success')
+      );
+      await _getDiary();
+    };
+  }
+
   Future<void> _deleteDiary(String id) async {
     var response;
     Map<String, String> headers = {
@@ -75,7 +109,7 @@ class _DiariesState extends State {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
-      _token = context.watch<UserLoginProvider>().getToken;
+      _token = context.read<UserLoginProvider>().getToken;
       await _getDiary();
     });
   }
@@ -120,7 +154,7 @@ class _DiariesState extends State {
           onPressed: () {
             showDialog(
               context: context,
-              builder: (context) => _buildForm(context, _diary),
+              builder: (context) => _buildForm(context, "store", _diary),
             );
           },
           child: const Text('Create +'),),],);
@@ -137,7 +171,7 @@ class _DiariesState extends State {
               if (item.name == 'edit') {
                 showDialog(
                   context: context,
-                  builder: (context) => _buildForm(context, diary),
+                  builder: (context) => _buildForm(context, "update", diary),
                 );
               } else {
                 await _deleteDiary(diary['_id']);
@@ -166,8 +200,10 @@ class _DiariesState extends State {
           dense: true,),],);
   }
 
-  Widget _buildForm(BuildContext context, var diary) {
+  Widget _buildForm(BuildContext context, String mode, var diary) {
+    final _formKey = GlobalKey<FormState>();
     return AlertDialog(
+      key: _formKey,
       content: Stack(
         children: [
           Form(
@@ -189,7 +225,7 @@ class _DiariesState extends State {
                   child: TextFormField(
                     decoration: const InputDecoration(
                       labelText: 'Location',
-                      icon: Icon(Icons.airplanemode_active),),
+                      icon: Icon(Icons.location_pin),),
                     validator: (value) => (value == null || value.isEmpty ? 'Please enter some text' : null),
                     onSaved: (value) { diary['location'] = value; },
                     initialValue: diary['location']),),
@@ -198,7 +234,7 @@ class _DiariesState extends State {
                   child: TextFormField(
                     decoration: const InputDecoration(
                       labelText: 'Image',
-                      icon: Icon(Icons.airplanemode_active),),
+                      icon: Icon(Icons.image_rounded),),
                     validator: (value) => (value == null || value.isEmpty ? 'Please enter some text' : null),
                     onSaved: (value) { diary['image'] = value; },
                     initialValue: diary['image']),),
@@ -206,8 +242,8 @@ class _DiariesState extends State {
                   padding: const EdgeInsets.all(8.0),
                   child: TextFormField(
                     decoration: const InputDecoration(
-                      labelText: 'Diary Name',
-                      icon: Icon(Icons.airplanemode_active),),
+                      labelText: 'Caption',
+                      icon: Icon(Icons.text_fields),),
                     validator: (value) => (value == null || value.isEmpty ? 'Please enter some text' : null),
                     onSaved: (value) { diary['caption'] = value; },
                     initialValue: diary['caption']),),
@@ -215,7 +251,17 @@ class _DiariesState extends State {
                   padding: const EdgeInsets.all(8.0),
                   child: ElevatedButton(
                     child: const Text('Submit'),
-                    onPressed: () {},),)],),),
+                    onPressed: () async {
+                      if (_formKey.currentState!.validate()) {
+                        _formKey.currentState!.save();
+                        if (mode == "store") {
+                          await _addDiary(diary);
+                        } else {
+                          await _updateDiary(diary);
+                        }
+                        Navigator.of(context).pop();
+                      }
+                    },),)],),),
           Positioned(
             right: 0,
             top: 0,
