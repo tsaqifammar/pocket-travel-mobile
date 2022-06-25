@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pocket_travel_mobile/screens/diaries.dart';
 import 'package:pocket_travel_mobile/widgets/login_signup.dart';
 
 class HomePageBeforeLogin extends StatefulWidget {
@@ -17,11 +18,7 @@ class _HomePageBeforeLoginState extends State<HomePageBeforeLogin> {
   }
 
   static List<Widget> _pages = <Widget>[
-    Center(
-      child: Text(
-        'Index 0: home',
-      ),
-    ),
+    PublicDiary(),
     LoginSignUpScreen()
   ];
 
@@ -33,8 +30,7 @@ class _HomePageBeforeLoginState extends State<HomePageBeforeLogin> {
           title: const Text('PocketTravel',
               style:
                   TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
-          backgroundColor: Colors.white,
-          elevation: 0),
+          backgroundColor: Colors.white,),
       body: _pages.elementAt(_selectedNavbar),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pocket_travel_mobile/screens/diaries.dart';
 import 'package:pocket_travel_mobile/screens/checklist_page.dart';
 import 'package:pocket_travel_mobile/screens/plan_page.dart';
 import 'package:pocket_travel_mobile/widgets/logout_button.dart';
@@ -20,16 +21,8 @@ class _HomePageAfterLoginState extends State<HomePageAfterLogin> {
   }
 
   static List<Widget> _pages = <Widget>[
-    Center(
-      child: Text(
-        'Index 0: home',
-      ),
-    ),
-    Center(
-      child: Text(
-        'Index 1: Diary',
-      ),
-    ),
+    PublicDiary(),
+    PrivateDiary(),
     ChecklistPage(),
     PlanPage(),
     Center(child: LogoutButton())
@@ -43,8 +36,7 @@ class _HomePageAfterLoginState extends State<HomePageAfterLogin> {
           title: const Text('PocketTravel',
               style:
                   TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
-          backgroundColor: Colors.white,
-          elevation: 0),
+          backgroundColor: Colors.white,),
       body: _pages.elementAt(_selectedNavbar),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
@@ -53,7 +45,7 @@ class _HomePageAfterLoginState extends State<HomePageAfterLogin> {
             label: 'Home',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person),
+            icon: Icon(Icons.book),
             label: 'Diary',
           ),
           BottomNavigationBarItem(
