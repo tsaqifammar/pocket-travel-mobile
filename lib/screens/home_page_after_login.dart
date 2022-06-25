@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pocket_travel_mobile/screens/diaries.dart';
+import 'package:pocket_travel_mobile/screens/checklist_page.dart';
 import 'package:pocket_travel_mobile/screens/plan_page.dart';
 import 'package:pocket_travel_mobile/widgets/logout_button.dart';
 
@@ -22,11 +23,7 @@ class _HomePageAfterLoginState extends State<HomePageAfterLogin> {
   static List<Widget> _pages = <Widget>[
     PublicDiary(),
     PrivateDiary(),
-    Center(
-      child: Text(
-        'Index 2: Checklist',
-      ),
-    ),
+    ChecklistPage(),
     PlanPage(),
     Center(child: LogoutButton())
   ];
@@ -48,11 +45,11 @@ class _HomePageAfterLoginState extends State<HomePageAfterLogin> {
             label: 'Home',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person),
+            icon: Icon(Icons.book),
             label: 'Diary',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.book),
+            icon: Icon(Icons.notes),
             label: 'Checklist',
           ),
           BottomNavigationBarItem(
