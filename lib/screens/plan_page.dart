@@ -1,9 +1,11 @@
 
 import 'package:flutter/material.dart';
 import 'package:pocket_travel_mobile/models/plan.dart';
+import 'package:pocket_travel_mobile/providers/plan_provider.dart';
 import 'package:pocket_travel_mobile/services/plan_service.dart';
 import 'package:pocket_travel_mobile/widgets/plan_card.dart';
 import 'package:pocket_travel_mobile/widgets/plan_header.dart';
+import 'package:provider/provider.dart';
 
 class PlanPage extends StatefulWidget {
   const PlanPage({Key? key}) : super(key: key);
@@ -13,43 +15,40 @@ class PlanPage extends StatefulWidget {
 }
 
 class _PlanPageState extends State<PlanPage> {
-  late Future<List<Plan>> plans;
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
     super.initState();
-    // TODO: Ambil userId dan token dari provider
-    String userId = 'user-eW55sv5gJqujtWgO';
-    String token = '62a476164223be28131a6ad3|4rlylsCIl7fQMaJMLqa4GyVMOasjr6xspwSxMmMG';
-    plans = PlanService().fetchPlans(userId, token);
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
+      if (context.read<PlanProvider>().getPlans.isEmpty) {
+        await PlanService(context).fetchPlans();
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       body: Container(
         margin: const EdgeInsets.all(10),
-        child: FutureBuilder<List<Plan>>(
-          future: plans,
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              var plansData = snapshot.data!;
-              return ListView.builder(
-                itemCount: plansData.length + 1,
-                itemBuilder: (context, index) {
-                  if (index == 0) return const PlanHeader();
-                  return Padding(
-                    padding: const EdgeInsets.only(top: 10),
-                    child: PlanCard(planData: plansData[index-1]),
-                  );
-                },
+        child: <Widget>() {
+          List<Plan> plans = context.watch<PlanProvider>().getPlans;
+
+          if (plans.isEmpty) return const Center(child: CircularProgressIndicator());
+
+          return ListView.builder(
+            itemCount: plans.length + 1,
+            itemBuilder: (context, index) {
+              if (index == 0) return const PlanHeader();
+              return Padding(
+                padding: const EdgeInsets.only(top: 10),
+                child: PlanCard(planData: plans[index-1]),
               );
-            } else if (snapshot.hasError) {
-              return Text('${snapshot.error}');
-            }
-            return const Center(child: CircularProgressIndicator());
-          },
-        ),
+            },
+          );
+        }(),
       ),
     );
   }
