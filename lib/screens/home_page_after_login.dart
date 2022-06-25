@@ -57,7 +57,7 @@ class _HomePageAfterLoginState extends State<HomePageAfterLogin> {
             label: 'Diary',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person),
+            icon: Icon(Icons.notes),
             label: 'Checklist',
           ),
           BottomNavigationBarItem(
