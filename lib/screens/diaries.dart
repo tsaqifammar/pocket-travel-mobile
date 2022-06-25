@@ -56,7 +56,6 @@ class _DiariesState extends State {
   }
 
   Future<void> _addDiary(Map<String,dynamic> diary) async {
-    diary['isPublic'] = true;
     Map<String, String> _headers = {
       'Content-type': 'application/json',
       'Accept': 'application/json',
@@ -72,7 +71,6 @@ class _DiariesState extends State {
   }
 
   Future<void> _updateDiary(Map<String,dynamic> diary) async {
-    diary['isPublic'] = true;
     Map<String, String> _headers = {
       'Content-type': 'application/json',
       'Accept': 'application/json',
@@ -193,7 +191,7 @@ class _DiariesState extends State {
         Image.network("${diary['image']}"),
         ListTile(
           title: Text("${diary['caption']}"),
-          subtitle: Text("${diary['created_at']}"),
+          subtitle: Text("${diary['created_at'].toString().split('T')[0]}"),
           dense: true,),],);
   }
 
@@ -245,6 +243,20 @@ class _DiariesState extends State {
                     validator: (value) => (value == null || value.isEmpty ? 'Please enter some text' : null),
                     onSaved: (value) { diary['caption'] = value; },
                     initialValue: diary['caption']),),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: DropdownButtonFormField<bool>(
+                      value: diary['isPublic'],
+                      elevation: 16,
+                      onChanged: (value) {},
+                      onSaved: (value) { diary['isPublic'] = value; },
+                      items: <bool>[false, true].map<DropdownMenuItem<bool>>((bool value) {
+                        return DropdownMenuItem<bool>(
+                          value: value,
+                          child: value ? const Text('Public') : const Text('Private'),
+                        );
+                      }).toList(),
+                    ),),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: ElevatedButton(
