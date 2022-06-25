@@ -20,7 +20,7 @@ class _DiariesState extends State {
   bool isPublic;
   _DiariesState(this.isPublic);
 
-  var _diaries;
+  var _diaries = [];
   bool _firstRun = false;
   bool _dbg = false;
   var _dbMsg;
@@ -45,14 +45,14 @@ class _DiariesState extends State {
   }
 
   @override
-  void initState() async {
+  void initState() {
     super.initState();
-    await _getDiary();
+    _token = context.watch<UserLoginProvider>().getToken;
+    () async { await _getDiary(); } ();
   }
 
   @override
   Widget build(BuildContext context) {
-    _token = context.read<UserLoginProvider>().getToken;
     return Scaffold(
       body: RefreshIndicator(
         onRefresh: () async {
@@ -63,9 +63,8 @@ class _DiariesState extends State {
             children: [
               if (_dbg) _buildBox(Text("$_dbMsg")),
               _buildBox(_buildHeader(this.isPublic)),
-              if (!_diaries.isEmpty)
-                for (var _diary in _diaries)
-                  _buildBox(_buildPostCard(_diary, _firstRun)),],),),);
+              for (var _diary in _diaries)
+                _buildBox(_buildPostCard(_diary, _firstRun)),],),),);
   }
 }
 
