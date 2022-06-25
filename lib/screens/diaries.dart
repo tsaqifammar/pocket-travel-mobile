@@ -32,39 +32,38 @@ class _DiariesState extends State {
   bool _dbg = false;
   var _dbMsg;
   late String _token;
+  var _response;
 
   Future<void> _getDiary() async {
     setState(() {
       _firstRun = true;
     });
-    var response;
     if (this.isPublic) {
-      response = await http.get(Uri.parse('${URLS.BACKEND}/public'));
+      _response = await http.get(Uri.parse('${URLS.BACKEND}/public'));
     } else {
-      Map<String, String> headers = {
+      Map<String, String> _headers = {
         'Content-type': 'application/json',
         'Accept': 'application/json',
         'Authorization': 'Bearer $_token'
       };
-      response = await http.get(Uri.parse('${URLS.BACKEND}/diary'), headers: headers);
+      _response = await http.get(Uri.parse('${URLS.BACKEND}/diary'), headers: _headers);
     }
     setState(() {
-      if (response.statusCode == 200) _diaries = jsonDecode(response.body)['data'];
+      if (_response.statusCode == 200) _diaries = jsonDecode(_response.body)['data'];
       _dbMsg = _diaries;
       _firstRun = false;
     });
   }
 
   Future<void> _addDiary(Map<String,dynamic> diary) async {
-    var response;
-    Map<String, String> headers = {
+    diary['isPublic'] = true;
+    Map<String, String> _headers = {
       'Content-type': 'application/json',
       'Accept': 'application/json',
       'Authorization': 'Bearer $_token'
-    };;
-    diary['isPublic'] = true;
-    response = await http.post(Uri.parse('${URLS.BACKEND}/diary'), headers: headers, body: jsonEncode(diary));
-    if (response.statusCode == 201) {
+    };
+    _response = await http.post(Uri.parse('${URLS.BACKEND}/diary'), headers: _headers, body: jsonEncode(diary));
+    if (_response.statusCode == 201) {
       ScaffoldMessenger.of(context).showSnackBar(
         StatusSnackBar.success('Success')
       );
@@ -73,15 +72,14 @@ class _DiariesState extends State {
   }
 
   Future<void> _updateDiary(Map<String,dynamic> diary) async {
-    var response;
-    Map<String, String> headers = {
+    diary['isPublic'] = true;
+    Map<String, String> _headers = {
       'Content-type': 'application/json',
       'Accept': 'application/json',
       'Authorization': 'Bearer $_token'
-    };;
-    diary['isPublic'] = true;
-    response = await http.put(Uri.parse('${URLS.BACKEND}/diary/${diary['id']}'), headers: headers, body: jsonEncode(diary));
-    if (response.statusCode == 201) {
+    };
+    _response = await http.put(Uri.parse('${URLS.BACKEND}/diary/${diary['_id']}'), headers: _headers, body: jsonEncode(diary));
+    if (_response.statusCode == 204) {
       ScaffoldMessenger.of(context).showSnackBar(
         StatusSnackBar.success('Success')
       );
@@ -90,14 +88,13 @@ class _DiariesState extends State {
   }
 
   Future<void> _deleteDiary(String id) async {
-    var response;
-    Map<String, String> headers = {
+    Map<String, String> _headers = {
       'Content-type': 'application/json',
       'Accept': 'application/json',
       'Authorization': 'Bearer $_token'
     };
-    response = await http.delete(Uri.parse('${URLS.BACKEND}/diary/$id'), headers: headers);
-    if (response.statusCode == 204) {
+    _response = await http.delete(Uri.parse('${URLS.BACKEND}/diary/$id'), headers: _headers);
+    if (_response.statusCode == 204) {
       ScaffoldMessenger.of(context).showSnackBar(
         StatusSnackBar.success('Success')
       );
@@ -201,12 +198,13 @@ class _DiariesState extends State {
   }
 
   Widget _buildForm(BuildContext context, String mode, var diary) {
+    // FormState form = Form.of(context);
     final _formKey = GlobalKey<FormState>();
     return AlertDialog(
-      key: _formKey,
       content: Stack(
         children: [
           Form(
+            key: _formKey,
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -268,10 +266,6 @@ class _DiariesState extends State {
             child: InkResponse(
               onTap: () => Navigator.of(context).pop(),
               child: const Icon(Icons.close, color: Colors.grey),
-            ),
-          ),
-        ],
-      ),
-    );
+            ),),],),);
   }
 }
