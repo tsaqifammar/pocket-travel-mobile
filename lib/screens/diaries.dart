@@ -248,6 +248,10 @@ class _DiariesState extends State {
                   child: DropdownButtonFormField<bool>(
                       value: diary['isPublic'],
                       elevation: 16,
+                      decoration: const InputDecoration(
+                        labelText: 'Visibility',
+                        icon: Icon(Icons.remove_red_eye),
+                      ),
                       onChanged: (value) {},
                       onSaved: (value) { diary['isPublic'] = value; },
                       items: <bool>[false, true].map<DropdownMenuItem<bool>>((bool value) {
