@@ -29,8 +29,8 @@ class PlanService {
 
     if (response.statusCode == 200) {
       var resJson = jsonDecode(response.body);
-      _context.read<PlanProvider>().setPlans(
-          (resJson['plans'] as List).map((p) => Plan.fromJson(p)).toList());
+      _context.read<PlanProvider>().setPlans((resJson['plans'] as List).map((p) => Plan.fromJson(p)).toList());
+      _context.read<PlanProvider>().setFetchedOnce(true);
     } else {
       throw Exception('Fetching plan failed');
     }
