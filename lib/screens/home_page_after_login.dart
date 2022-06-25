@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pocket_travel_mobile/screens/checklist_page.dart';
 import 'package:pocket_travel_mobile/screens/plan_page.dart';
 import 'package:pocket_travel_mobile/widgets/logout_button.dart';
 
@@ -29,11 +30,7 @@ class _HomePageAfterLoginState extends State<HomePageAfterLogin> {
         'Index 1: Diary',
       ),
     ),
-    Center(
-      child: Text(
-        'Index 2: Checklist',
-      ),
-    ),
+    ChecklistPage(),
     PlanPage(),
     Center(child: LogoutButton())
   ];
