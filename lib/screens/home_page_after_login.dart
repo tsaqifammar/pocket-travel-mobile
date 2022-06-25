@@ -20,8 +20,8 @@ class _HomePageAfterLoginState extends State<HomePageAfterLogin> {
   }
 
   static List<Widget> _pages = <Widget>[
-    PublicDiaries(),
-    PrivateDiaries(),
+    PublicDiary(),
+    PrivateDiary(),
     Center(
       child: Text(
         'Index 2: Checklist',

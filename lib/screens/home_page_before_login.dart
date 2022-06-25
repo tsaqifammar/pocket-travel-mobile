@@ -18,7 +18,7 @@ class _HomePageBeforeLoginState extends State<HomePageBeforeLogin> {
   }
 
   static List<Widget> _pages = <Widget>[
-    PublicDiaries(),
+    PublicDiary(),
     LoginSignUpScreen()
   ];
 
