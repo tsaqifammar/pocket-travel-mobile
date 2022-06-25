@@ -35,8 +35,9 @@ class _PlanPageState extends State<PlanPage> {
         margin: const EdgeInsets.all(10),
         child: <Widget>() {
           List<Plan> plans = context.watch<PlanProvider>().getPlans;
+          bool hasFetchedOnce = context.watch<PlanProvider>().hasFetchedOnce;
 
-          if (plans.isEmpty) return const Center(child: CircularProgressIndicator());
+          if (!hasFetchedOnce) return const Center(child: CircularProgressIndicator());
 
           return ListView.builder(
             itemCount: plans.length + 1,
