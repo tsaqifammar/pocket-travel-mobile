@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pocket_travel_mobile/providers/plan_provider.dart';
 import 'package:pocket_travel_mobile/screens/home_page_before_login.dart';
 import 'package:pocket_travel_mobile/providers/user_login_provider.dart';
 import 'package:provider/provider.dart';
@@ -17,8 +18,9 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider.value(
           value: UserLoginProvider(),
         ),
+        ChangeNotifierProvider(create: (_) => PlanProvider()),
       ],
-      child: MaterialApp(
+      child: const MaterialApp(
         debugShowCheckedModeBanner: false,
         home: HomePageBeforeLogin(),
       ),
