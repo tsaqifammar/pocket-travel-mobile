@@ -1,4 +1,4 @@
 
 class URLS {
-    static const String BACKEND = 'https://pocket-travel-api.herokuapp.com/api';
+    static const String BACKEND = 'http://159.223.82.72/api';
 }
